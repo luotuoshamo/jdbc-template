@@ -8,7 +8,7 @@
 JdbcUtil.initJdbcConfig(String db_url, String db_user, String db_pwd)
 JdbcUtil.initJdbcConfig(String db_url, String db_user, String db_pwd, int connectionMaxCount)
 ```
-* 例子
+* 例子 
 SpringBoot项目这样设置
 ```java
 @SpringBootApplication
@@ -41,7 +41,7 @@ public class testT1 {
 ```
 
 ## 查询
-<p>给sql传参数可以直接写，也可以用数组</p>
+给sql传参数可以直接写，也可以用数组
 * API
 ```java
 JdbcUtil.query(String sql, Object... params)
