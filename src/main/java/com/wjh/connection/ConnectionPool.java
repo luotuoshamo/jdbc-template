@@ -21,18 +21,7 @@ public class ConnectionPool {
     private static List<Connection> connectionList = new ArrayList<Connection>();
 
     static {
-        try {
-            //初始化连接池中最大的连接数量
-            maxCount = JdbcConfig.CONNECTION_MAX_COUNT;
-            //初始化连接池
-            for (int i = 0; i < maxCount; i++) {
-                Connection c = DriverManager.getConnection(JdbcConfig.DB_URL, JdbcConfig.DB_USER, JdbcConfig.DB_PWD);
-                connectionList.add(c);
-                currentCount++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       //init();
     }
 
     /**
@@ -48,5 +37,20 @@ public class ConnectionPool {
             }
         }
         return connectionList.get(new Random().nextInt(currentCount));
+    }
+
+    public static void init() {
+        try {
+            //初始化连接池中最大的连接数量
+            maxCount = JdbcConfig.CONNECTION_MAX_COUNT;
+            //初始化连接池
+            for (int i = 0; i < maxCount; i++) {
+                Connection c = DriverManager.getConnection(JdbcConfig.DB_URL, JdbcConfig.DB_USER, JdbcConfig.DB_PWD);
+                connectionList.add(c);
+                currentCount++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

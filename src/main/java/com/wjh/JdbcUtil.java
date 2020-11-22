@@ -32,6 +32,7 @@ public class JdbcUtil {
         JdbcConfig.DB_PWD = db_pwd;
 
         JdbcConfig.CONNECTION_MAX_COUNT = connectionMaxCount;
+        ConnectionPool.init();
     }
 
     /**

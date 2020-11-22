@@ -27,6 +27,7 @@
                     <target>8</target>
                 </configuration>
             </plugin>-->
+            <!--非springBoot项目要将依赖打入jar中，需要加这个plugin-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
