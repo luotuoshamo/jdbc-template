@@ -4,7 +4,9 @@ import com.wjh.config.JdbcConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -19,10 +21,8 @@ public class ConnectionPool {
     private static Integer currentCount = 0;
     //连接池
     private static List<Connection> connectionList = new ArrayList<Connection>();
-
-    static {
-       //init();
-    }
+    //connectionList中每个连接的创建时间
+    //private static List<Date> connectionCreateTimeList = new ArrayList<Date>();
 
     /**
      * 从连接池中获取1个连接
@@ -36,9 +36,23 @@ public class ConnectionPool {
                 e.printStackTrace();
             }
         }
-        return connectionList.get(new Random().nextInt(currentCount));
+        // 随机取一个connection
+        Connection connection = connectionList.get(new Random().nextInt(currentCount));
+        try {
+            // 当出现超时的connection就刷新连接池
+            if(connection.isClosed()){
+                refresh();
+                connection = connectionList.get(new Random().nextInt(currentCount));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
     }
 
+    /**
+     * 初始化连接池
+     */
     public static void init() {
         try {
             //初始化连接池中最大的连接数量
@@ -52,5 +66,12 @@ public class ConnectionPool {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 刷新连接池
+     */
+    private static void refresh(){
+        init();
     }
 }
