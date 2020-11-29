@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -21,8 +20,6 @@ public class ConnectionPool {
     private static Integer currentCount = 0;
     //连接池
     private static List<Connection> connectionList = new ArrayList<Connection>();
-    //connectionList中每个连接的创建时间
-    //private static List<Date> connectionCreateTimeList = new ArrayList<Date>();
 
     /**
      * 从连接池中获取1个连接
@@ -39,10 +36,11 @@ public class ConnectionPool {
         // 随机取一个connection
         Connection connection = connectionList.get(new Random().nextInt(currentCount));
         try {
-            // 当出现超时的connection就刷新连接池
-            if(connection.isClosed()){
-                refresh();
-                connection = connectionList.get(new Random().nextInt(currentCount));
+            // 当出现超时的connection就删掉这个连接，在创建个新的放入连接池
+            if (connection.isClosed()) {
+                connectionList.remove(connection);
+                connection = createConnection();
+                connectionList.add(connection);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,11 +53,11 @@ public class ConnectionPool {
      */
     public static void init() {
         try {
-            //初始化连接池中最大的连接数量
+            // 初始化连接池中最大的连接数量
             maxCount = JdbcConfig.CONNECTION_MAX_COUNT;
-            //初始化连接池
+            // 初始化连接池
             for (int i = 0; i < maxCount; i++) {
-                Connection c = DriverManager.getConnection(JdbcConfig.DB_URL, JdbcConfig.DB_USER, JdbcConfig.DB_PWD);
+                Connection c = createConnection();
                 connectionList.add(c);
                 currentCount++;
             }
@@ -68,10 +66,17 @@ public class ConnectionPool {
         }
     }
 
+
     /**
-     * 刷新连接池
+     * 创建新connection
      */
-    private static void refresh(){
-        init();
+    private static Connection createConnection() {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(JdbcConfig.DB_URL, JdbcConfig.DB_USER, JdbcConfig.DB_PWD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
     }
 }

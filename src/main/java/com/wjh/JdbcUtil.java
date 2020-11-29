@@ -18,9 +18,7 @@ public class JdbcUtil {
      * 初始化数据源（数据库信息，因为数据库是数据源头，所以叫数据源）
      */
     public static void initJdbcConfig(String db_url, String db_user, String db_pwd) {
-        JdbcConfig.DB_URL = db_url;
-        JdbcConfig.DB_USER = db_user;
-        JdbcConfig.DB_PWD = db_url;
+        initJdbcConfig(db_url, db_user, db_pwd, 8);
     }
 
     /**
@@ -80,7 +78,7 @@ public class JdbcUtil {
     /**
      * 读（即 查询）
      *
-     * @param sql select * from user a where a.id>?
+     * @param sql 例如 select * from user a where a.id > ?
      */
     public static List<Map<String, Object>> query(String sql, Object... params) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
