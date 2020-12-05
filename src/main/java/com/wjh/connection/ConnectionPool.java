@@ -4,6 +4,7 @@ import com.wjh.config.JdbcConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +38,12 @@ public class ConnectionPool {
         Connection connection = connectionList.get(new Random().nextInt(currentCount));
         try {
             // 当出现超时的connection就删掉这个连接，在创建个新的放入连接池
-            if (connection.isClosed()) {
+            if (isConnectionEffective(connection)) {
                 connectionList.remove(connection);
                 connection = createConnection();
                 connectionList.add(connection);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return connection;
@@ -78,5 +79,20 @@ public class ConnectionPool {
             e.printStackTrace();
         }
         return connection;
+    }
+
+    /**
+     * 判断connection是否有效（无效：超时...）
+     */
+    private static boolean isConnectionEffective(Connection connection) {
+        try {
+            connection.prepareStatement("select 1")
+                    .executeQuery();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("connection无效");
+            return false;
+        }
     }
 }
