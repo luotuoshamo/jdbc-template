@@ -38,7 +38,7 @@ public class ConnectionPool {
         Connection connection = connectionList.get(new Random().nextInt(currentCount));
         try {
             // 当出现超时的connection就删掉这个连接，在创建个新的放入连接池
-            if (isConnectionEffective(connection)) {
+            if (!isConnectionEffective(connection)) {
                 connectionList.remove(connection);
                 connection = createConnection();
                 connectionList.add(connection);
