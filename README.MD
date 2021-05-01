@@ -34,7 +34,7 @@
     	String sql = "  select id uId, name from user a where id > ? and name <> ?  ";
     	Object[] params = {1, "张三"};
     	List<Map<String, Object>> list = jdbcTemplate.query(sql, params);
-    	System.out.println(list);
+    	System.out.println("读结果=" + list);
     }   
     ```
 
