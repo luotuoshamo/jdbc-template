@@ -1,98 +1,74 @@
 package com.wjh.connection;
 
-import com.wjh.config.JdbcConfig;
+import com.wjh.connection.selectStrategy.SelectStrategy;
+import com.wjh.util.ConnectionUtil;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 连接池
- * 连接：jvm-database
  */
 public class ConnectionPool {
-    //连接池中最大的连接数量
-    private static Integer maxCount;
-    //当前连接池中的连接数量
-    private static Integer currentCount = 0;
-    //连接池
-    private static List<Connection> connectionList = new ArrayList<Connection>();
+    // 数据源
+    private DataSource dataSource;
+    // 从连接池中获取连接的策略
+    private SelectStrategy selectStrategy;
+    // 连接池
+    private List<Connection> connectionList = new ArrayList<Connection>();
 
-    /**
-     * 从连接池中获取1个连接
-     * 获取算法：随机
-     */
-    public static Connection getConnection() {
-        if (currentCount <= 0) {
+    public ConnectionPool(DataSource dataSource, SelectStrategy selectStrategy) {
+        try {
+            dataSource.check();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.dataSource = dataSource;
+        this.selectStrategy = selectStrategy;
+
+        //初始化连接池
+        for (int i = 0; i < dataSource.getMaxConnectionCount(); i++) {
             try {
-                throw new Exception("连接池中的连接数为0");
+                connectionList.add(ConnectionUtil.creatConnection(dataSource));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        // 随机取一个connection
-        Connection connection = connectionList.get(new Random().nextInt(currentCount));
-        try {
-            // 当出现超时的connection就删掉这个连接，在创建个新的放入连接池
-            if (!isConnectionEffective(connection)) {
-                connectionList.remove(connection);
-                connection = createConnection();
-                connectionList.add(connection);
+    }
+
+    public List<Connection> getConnectionList() {
+        return connectionList;
+    }
+
+    /**
+     * 从连接池中获取连接
+     * 对取出的connection测试下，如果失效，则再取一次，直到取到有效的的连接
+     */
+    public Connection getConnection() throws Exception {
+        while (true) {
+            checkConnectionCount();
+            // 取1个connection
+            Connection connection = selectStrategy.select(this);
+            if (ConnectionUtil.isEffectiveConnection(dataSource.getDatabaseType(), connection)) return connection;
+            connectionList.remove(connection);
+        }
+    }
+
+    /**
+     * 判断连接池中连接数量是否足够
+     */
+    private void checkConnectionCount() throws Exception {
+        if (connectionList.size() < dataSource.getMinConnectionCount()) {
+            // 补充连接池中连接的数量
+            int count = dataSource.getMaxConnectionCount() - connectionList.size();
+            for (int i = 0; i < count; i++) {
+                connectionList.add(ConnectionUtil.creatConnection(dataSource));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return connection;
-    }
-
-    /**
-     * 初始化连接池
-     */
-    public static void init() {
-        try {
-            // 初始化连接池中最大的连接数量
-            maxCount = JdbcConfig.CONNECTION_MAX_COUNT;
-            // 初始化连接池
-            for (int i = 0; i < maxCount; i++) {
-                Connection c = createConnection();
-                connectionList.add(c);
-                currentCount++;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
-
-    /**
-     * 创建新connection
-     */
-    private static Connection createConnection() {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(JdbcConfig.DB_URL, JdbcConfig.DB_USER, JdbcConfig.DB_PWD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection;
-    }
-
-    /**
-     * 判断connection是否有效（无效：超时...）
-     */
-    private static boolean isConnectionEffective(Connection connection) {
-        try {
-            connection.prepareStatement("select 1")
-                    .executeQuery();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("connection无效");
-            return false;
-        }
+    public boolean isEmpty() {
+        return this == null || connectionList == null || connectionList.size() == 0;
     }
 }
