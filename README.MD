@@ -1,13 +1,13 @@
-## 概述
+# 概述
 * 轻量级封装JDBC
 
 * 基于JDK1.8和MySQL5.1.48测试的
 
-  #  API
+#  API
 
-  * 配置数据源
+ * 配置数据源
 
-    ```java
+ ```java
     private DataSource dataSource() {
     	DataSource dataSource = new DataSource();
     	dataSource.setDatabaseType(DataBaseTypeEnum.MYSQL);
@@ -18,9 +18,8 @@
     	dataSource.setMaxConnectionCount(10);
     	return dataSource;
     }
-    ```
+ ```
 
-    
 
   * 读
 
@@ -57,8 +56,3 @@
     
     ```
 
-    
-
-
-
-## 
