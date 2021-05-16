@@ -4,7 +4,9 @@ import com.wjh.connection.ConnectionPool;
 import com.wjh.connection.DataSource;
 import com.wjh.connection.selectStrategy.RandomSelectStrategy;
 import com.wjh.connection.selectStrategy.SelectStrategy;
+import com.wjh.util.DataBaseTypeEnum;
 import com.wjh.util.ResultSetUtil;
+import com.wjh.util.UrlUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,6 +54,24 @@ public class JdbcTemplate {
     }
 
     /**
+     * 批量写
+     * MySQL批处理时必需设置参数rewriteBatchedStatements，且参数中字母的大小写必需这样
+     */
+    public int[] updateBatch(String sql, List<Object[]> paramsList) throws Exception {
+        if (!allowBatch()) throw new Exception("未开启批处理，MySQL设置rewriteBatchedStatements=true");
+
+        Connection connection = connectionPool.getConnection();
+        PreparedStatement ps = connection.prepareStatement(sql);
+        for (Object[] params : paramsList) {
+            // 给1条sql设置参数
+            for (int i = 0; i < params.length; i++)
+                ps.setObject(i + 1, params[i]);
+            ps.addBatch();
+        }
+        return ps.executeBatch();
+    }
+
+    /**
      * 写（增删改）
      *
      * @param connection 用于实现事务
@@ -63,5 +83,27 @@ public class JdbcTemplate {
             ps.setObject(i + 1, params[i]);
         }
         return ps.executeUpdate();
+    }
+
+    /**
+     * 判断当前数据库是否开启了批处理
+     */
+    private boolean allowBatch() {
+        DataSource ds = connectionPool.getDataSource();
+        DataBaseTypeEnum databaseType = ds.getDatabaseType();
+        String url = ds.getUrl();
+        Map<String, String> queryMap = UrlUtil.getQueryMapFromUrl(url);
+        String allowBatchKey = "rewriteBatchedStatements";
+        switch (databaseType) {
+            case MYSQL:
+                if (!queryMap.containsKey(allowBatchKey)
+                        || !"true".equals(queryMap.get(allowBatchKey))) {
+                    return false;
+                }
+                break;
+            case ORACLE:
+                return true;
+        }
+        return true;
     }
 }

@@ -41,6 +41,10 @@ public class ConnectionPool {
         return connectionList;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
     /**
      * 从连接池中获取连接
      * 对取出的connection测试下，如果失效，则再取一次，直到取到有效的的连接
