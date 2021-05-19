@@ -49,7 +49,7 @@ public class JdbcTemplate {
     /**
      * 写（增删改）
      */
-    public Integer update(String sql, Object... params) throws Exception {
+    public int update(String sql, Object... params) throws Exception {
         return update(sql, connectionPool.getConnection(), params);
     }
 
@@ -58,7 +58,7 @@ public class JdbcTemplate {
      * MySQL批处理时必需设置参数rewriteBatchedStatements，且参数中字母的大小写必需这样
      */
     public int[] updateBatch(String sql, List<Object[]> paramsList) throws Exception {
-        if (!allowBatch()) throw new Exception("未开启批处理，MySQL设置rewriteBatchedStatements=true");
+        if (!isAllowBatch()) throw new Exception("未开启批处理，MySQL设置rewriteBatchedStatements=true");
 
         Connection connection = connectionPool.getConnection();
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -88,7 +88,7 @@ public class JdbcTemplate {
     /**
      * 判断当前数据库是否开启了批处理
      */
-    private boolean allowBatch() {
+    private boolean isAllowBatch() {
         DataSource ds = connectionPool.getDataSource();
         DataBaseTypeEnum databaseType = ds.getDatabaseType();
         String url = ds.getUrl();
