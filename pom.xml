@@ -9,6 +9,14 @@
     <version>2.0.1</version>
     <description>轻量级封装JDBC</description>
 
+    <distributionManagement>
+        <repository>
+            <id>local-repo-release</id>
+            <name>GitHub Release</name>
+            <url>file://${project.basedir}/maven-repo</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
