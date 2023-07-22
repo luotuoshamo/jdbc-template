@@ -1,6 +1,6 @@
-package com.wjh.util;
+package cn.topicstudy.jdbctemplate.util;
 
-import com.wjh.connection.DataSource;
+import cn.topicstudy.jdbctemplate.connection.DataSource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

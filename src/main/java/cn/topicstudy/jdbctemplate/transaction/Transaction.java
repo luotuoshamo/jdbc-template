@@ -1,4 +1,4 @@
-package com.wjh.transaction;
+package cn.topicstudy.jdbctemplate.transaction;
 
 import java.sql.Connection;
 import java.sql.SQLException;

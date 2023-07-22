@@ -1,6 +1,6 @@
-package com.wjh.connection.selectStrategy;
+package cn.topicstudy.jdbctemplate.connection.selectStrategy;
 
-import com.wjh.connection.ConnectionPool;
+import cn.topicstudy.jdbctemplate.connection.ConnectionPool;
 
 import java.sql.Connection;
 import java.util.List;

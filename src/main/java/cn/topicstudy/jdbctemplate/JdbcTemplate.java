@@ -1,12 +1,12 @@
-package com.wjh;
+package cn.topicstudy.jdbctemplate;
 
-import com.wjh.connection.ConnectionPool;
-import com.wjh.connection.DataSource;
-import com.wjh.connection.selectStrategy.RandomSelectStrategy;
-import com.wjh.connection.selectStrategy.SelectStrategy;
-import com.wjh.util.DataBaseTypeEnum;
-import com.wjh.util.ResultSetUtil;
-import com.wjh.util.UrlUtil;
+import cn.topicstudy.jdbctemplate.connection.ConnectionPool;
+import cn.topicstudy.jdbctemplate.connection.DataSource;
+import cn.topicstudy.jdbctemplate.connection.selectStrategy.RandomSelectStrategy;
+import cn.topicstudy.jdbctemplate.connection.selectStrategy.SelectStrategy;
+import cn.topicstudy.jdbctemplate.util.DataBaseTypeEnum;
+import cn.topicstudy.jdbctemplate.util.ResultSetUtil;
+import cn.topicstudy.jdbctemplate.util.UrlUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

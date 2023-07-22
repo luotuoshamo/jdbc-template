@@ -1,4 +1,4 @@
-package com.wjh.util;
+package cn.topicstudy.jdbctemplate.util;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

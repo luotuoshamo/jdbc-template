@@ -1,7 +1,7 @@
-package com.wjh.connection;
+package cn.topicstudy.jdbctemplate.connection;
 
-import com.wjh.connection.selectStrategy.SelectStrategy;
-import com.wjh.util.ConnectionUtil;
+import cn.topicstudy.jdbctemplate.connection.selectStrategy.SelectStrategy;
+import cn.topicstudy.jdbctemplate.util.ConnectionUtil;
 
 import java.sql.Connection;
 import java.util.ArrayList;

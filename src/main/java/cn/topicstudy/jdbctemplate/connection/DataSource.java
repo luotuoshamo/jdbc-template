@@ -1,6 +1,6 @@
-package com.wjh.connection;
+package cn.topicstudy.jdbctemplate.connection;
 
-import com.wjh.util.DataBaseTypeEnum;
+import cn.topicstudy.jdbctemplate.util.DataBaseTypeEnum;
 
 public class DataSource {
     private DataBaseTypeEnum databaseType;

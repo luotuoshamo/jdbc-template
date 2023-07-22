@@ -1,4 +1,4 @@
-package com.wjh.util;
+package cn.topicstudy.jdbctemplate.util;
 
 public class StringUtil {
     private StringUtil() {

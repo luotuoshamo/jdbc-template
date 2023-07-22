@@ -1,4 +1,4 @@
-package com.wjh.util;
+package cn.topicstudy.jdbctemplate.util;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
